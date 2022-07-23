@@ -23,6 +23,12 @@ fn cargo() -> Html {
                 padding-left: 2rem;
                 padding-right: 2rem;
             "#)}>
+                <code class={css!(r#"
+                    user-select: none;
+                    -webkit-user-select: none;
+                "#)}>
+                    {"> "}
+                </code>
                 <code>
                     {"cargo add bounce"}
                 </code>
@@ -75,6 +81,9 @@ fn actions() -> Html {
 
                     color: white;
 
+                    user-select: none;
+                    -webkit-user-select: none;
+
                     box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0);
                     transition: box-shadow 0.2s ease-out, transform 0.2s ease-out;
 
@@ -114,6 +123,9 @@ fn actions() -> Html {
                     cursor: pointer;
 
                     color: white;
+
+                    user-select: none;
+                    -webkit-user-select: none;
 
                     box-shadow: 0 3px 10px 0 rgba(113, 173, 255, 0);
                     transition: box-shadow 0.2s ease-out, transform 0.2s ease-out;
@@ -167,6 +179,9 @@ fn actions() -> Html {
 
                         min-width: 10rem;
                         cursor: pointer;
+
+                        user-select: none;
+                        -webkit-user-select: none;
 
                         box-shadow: 0 3px 10px 0 rgba(231, 195, 179, 0);
                         transition: box-shadow 0.2s ease-out, transform 0.2s ease-out;
@@ -243,7 +258,7 @@ pub fn banner() -> Html {
                     text-align: center;
                 "#)}>
                     {"The uncomplicated "}
-                    <span class={css!(r#"color: rgb(30, 84, 30);"#)}>
+                    <span class={css!(r#"color: rgb(95, 149, 95);"#)}>
                         {"Yew"}
                     </span>
                     {" State management library."}

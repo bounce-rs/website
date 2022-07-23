@@ -47,7 +47,12 @@ pub fn app() -> Html {
         <BounceRoot>
             <HelmetBridge />
             <Helmet>
+                <meta charset="utf-8" />
                 <title>{"Bounce - The uncomplicated Yew State management library"}</title>
+                <meta name="viewport" content="width=device-width" />
+                <meta name="title" content="Bounce - The uncomplicated Yew State management library" />
+                <meta name="description" content="Bounce - The uncomplicated Yew State management library" />
+                <meta name="keywords" content="webassembly, rust, yew, state management, bounce" />
             </Helmet>
             <ContextProvider<ThemeSet> context={THEME_SET.clone()}>
                 <GlobalStyles />
