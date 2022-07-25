@@ -1,0 +1,96 @@
+---
+name: Deploy Website
+
+on: [push]
+
+jobs:
+  deploy:
+    name: Deploy Website
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    runs-on: ubuntu-latest
+    env:
+      CARGO_TERM_COLOR: always
+      RUST_VER: stable
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.1.0
+        with:
+          python-version: 3.10
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: '16'
+
+      - name: Setup Poetry
+        run: pip install poetry
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VER }}
+          override: true
+          components: rustfmt, clippy
+          profile: minimal
+
+      - name: Setup Rust WebAssembly Target
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VER }}
+          target: wasm32-unknown-unknown
+          profile: minimal
+
+      - name: Restore Rust Cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Setup trunk
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: "latest"
+
+      - name: Build Website
+        run: |
+          trunk build --release index.html
+
+      - name: Serve SSR Site
+        run: nohup npx serve -s -l 9999 &
+        working-directory: dist/
+
+      - name: Generate Static HTML
+        run: |
+          poetry install
+          poetry run playwright install firefox
+          poetry run website-helper ../dist/
+        working-directory: website-helper/
+
+      - name: Ask Robots to Refrain from Scanning the Staging Site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          cat > dist/robots.txt << EOF
+          User-agent: *
+          Disallow: /
+          EOF
+
+      - name: Deploy to Staging Branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4.3.4
+        with:
+          branch: pages-staging
+          folder: dist
+
+          ssh-key: "${{ secrets.WEBSITE_DEPLOY_KEY }}"
+          repository-name: "${{ secrets.WEBSITE_DEPLOY_REPO }}"
+
+      - name: Deploy to Production Branch
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: JamesIves/github-pages-deploy-action@v4.3.4
+        with:
+          branch: pages-prod
+          folder: dist
+
+          ssh-key: "${{ secrets.WEBSITE_DEPLOY_KEY }}"
+          repository-name: "${{ secrets.WEBSITE_DEPLOY_REPO }}"
