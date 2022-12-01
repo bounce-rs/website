@@ -10,7 +10,7 @@ publish = false
 bounce = { version = "0.3.0", features = ["helmet"] }
 once_cell = "1.13.0"
 stylist = { version = "0.10.1", features = ["yew_integration"] }
-yew = "0.19.3"
+yew = "0.20.0"
 yew-feather = "0.2.1"
 
 [profile.release]
