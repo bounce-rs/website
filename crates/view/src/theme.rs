@@ -1,5 +1,5 @@
 use once_cell::sync::Lazy;
-use yew::use_context;
+use yew::prelude::*;
 
 #[derive(PartialEq, Clone)]
 pub struct Background {
@@ -48,6 +48,7 @@ pub static THEME_SET: Lazy<ThemeSet> = Lazy::new(|| ThemeSet {
     },
 });
 
+#[hook]
 pub fn use_theme() -> ThemeSet {
     use_context::<ThemeSet>().expect("failed to read theme.")
 }

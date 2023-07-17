@@ -1,9 +1,9 @@
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
-use yew_feather::book::Book;
-use yew_feather::github::Github;
-use yew_feather::package::Package;
+use yew_feather::Book;
+use yew_feather::Github;
+use yew_feather::Package;
 
 use crate::theme::use_theme;
 
