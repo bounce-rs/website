@@ -1,5 +1,4 @@
-use bounce::helmet::{Helmet, HelmetBridge};
-use bounce::BounceRoot;
+use bounce::helmet::Helmet;
 use stylist::css;
 use stylist::yew::Global;
 use yew::prelude::*;
@@ -41,11 +40,10 @@ fn global_styles() -> Html {
     }
 }
 
-#[function_component(App)]
-pub fn app() -> Html {
+#[function_component]
+pub fn View() -> Html {
     html! {
-        <BounceRoot>
-            <HelmetBridge />
+        <>
             <Helmet>
                 <meta charset="utf-8" />
                 <title>{"Bounce - The uncomplicated Yew State management library"}</title>
@@ -59,6 +57,6 @@ pub fn app() -> Html {
                 <Banner />
                 <BackgroundSpinner />
             </ContextProvider<ThemeSet>>
-        </BounceRoot>
+        </>
     }
 }

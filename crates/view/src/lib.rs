@@ -1,6 +1,6 @@
-pub use app::App;
+pub use view::View;
 
-mod app;
 mod banner;
 mod bg_spin;
 mod theme;
+mod view;

@@ -7,6 +7,6 @@
 
 /dist
 
-# Added by cargo
-
-/target
+# Stellation artifacts
+.stellation/
+build/
