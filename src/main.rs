@@ -6,5 +6,5 @@ mod bg_spin;
 mod theme;
 
 fn main() {
-    yew::start_app::<App>();
+    yew::Renderer::<App>::new().render();
 }
