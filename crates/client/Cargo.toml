@@ -1,0 +1,9 @@
+[package]
+name = "bounce-website-client"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+bounce-website-view = { path = "../view" }
+yew = { version = "0.20.0", features = ["csr"] }
