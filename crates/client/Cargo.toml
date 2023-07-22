@@ -5,5 +5,15 @@ edition = "2021"
 publish = false
 
 [dependencies]
-bounce-website-view = { path = "../view" }
 yew = { version = "0.20.0", features = ["csr"] }
+
+# Stellation
+stellation-frontend = "0.2.0"
+stellation-stylist = { version = "0.2.0", features = ["frontend"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3.16", default-features = false, features = ["time", "std", "fmt", "ansi"] }
+
+# Example Workspace
+bounce-website-view = { path = "../view" }

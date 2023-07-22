@@ -1,0 +1,19 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+CARGO_MAKE_CLIPPY_ARGS = "--all-features -- -D warnings"
+
+# stctl
+[tasks.stctl]
+workspace = false
+command = "cargo"
+args = ["run", "--bin", "stctl", "--", "${@}"]
+
+[tasks.start]
+workspace = false
+command = "cargo"
+args = ["run", "--bin", "stctl", "--", "serve", "--open"]
+
+[tasks.build]
+workspace = false
+command = "cargo"
+args = ["run", "--bin", "stctl", "--", "build", "--release"]
