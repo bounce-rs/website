@@ -16,19 +16,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16"
-
-      - name: Setup Poetry
-        run: pip install poetry
-
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -44,53 +31,42 @@ jobs:
           target: wasm32-unknown-unknown
           profile: minimal
 
-      - name: Restore Rust Cache
-        uses: Swatinem/rust-cache@v1
+      - name: Configure sccache
+        uses: futursolo/sccache-action@affix-token-on-demand
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup trunk
         uses: jetli/trunk-action@v0.1.0
         with:
           version: "latest"
 
+      - name: Install cargo-make
+        uses: davidB/rust-cargo-make@v1
+
       - name: Build Website
-        run: |
-          trunk build --release index.html
+        run: cargo make --quiet build
 
-      - name: Serve SSR Site
-        run: nohup npx serve -s -l 9999 &
-        working-directory: dist/
-
-      - name: Generate Static HTML
-        run: |
-          poetry install
-          poetry run playwright install firefox
-          poetry run website-helper ../dist/
-        working-directory: website-helper/
-
-      - name: Ask Robots to Refrain from Scanning the Staging Site
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          cat > dist/robots.txt << EOF
-          User-agent: *
-          Disallow: /
-          EOF
-
-      - name: Deploy to Staging Branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@v4.4.0
+      - name: Login to Container Registry
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+        uses: docker/login-action@v2
         with:
-          branch: pages-staging
-          folder: dist
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
-          ssh-key: "${{ secrets.WEBSITE_DEPLOY_KEY }}"
-          repository-name: "${{ secrets.WEBSITE_DEPLOY_REPO }}"
+      - name: Publish to Container Registry as staging
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.REGISTRY_URL }}/bounce-website:staging
 
-      - name: Deploy to Production Branch
+      - name: Publish to Container Registry as latest
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        uses: docker/build-push-action@v4
         with:
-          branch: pages-prod
-          folder: dist
-
-          ssh-key: "${{ secrets.WEBSITE_DEPLOY_KEY }}"
-          repository-name: "${{ secrets.WEBSITE_DEPLOY_REPO }}"
+          context: .
+          push: true
+          tags: ${{ secrets.REGISTRY_URL }}/bounce-website:latest
