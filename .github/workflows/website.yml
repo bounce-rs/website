@@ -57,7 +57,7 @@ jobs:
 
       - name: Publish to Container Registry as staging
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
@@ -65,7 +65,7 @@ jobs:
 
       - name: Publish to Container Registry as latest
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
